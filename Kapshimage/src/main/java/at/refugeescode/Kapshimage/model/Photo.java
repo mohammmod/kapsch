@@ -1,10 +1,12 @@
 package at.refugeescode.Kapshimage.model;
 
-import at.refugeescode.Kapshimage.model.Category;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.stereotype.Service;
 
 @Document
+@Service
 public class Photo {
     @Id
     private String id;

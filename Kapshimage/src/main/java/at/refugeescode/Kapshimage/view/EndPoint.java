@@ -26,6 +26,7 @@ public class EndPoint {
 
     @Autowired
     private Repository imageRepository;
+    @Autowired
     private Photo image;
 
     @GetMapping
