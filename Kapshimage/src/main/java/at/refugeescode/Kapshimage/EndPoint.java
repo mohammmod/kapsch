@@ -2,6 +2,7 @@ package at.refugeescode.Kapshimage;
 
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -12,16 +13,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import javax.imageio.ImageIO;
 import java.util.Optional;
 
 
 @Controller
+@RequestMapping("/")
 public class EndPoint {
 
     private static String photoPath = "/home/mohammad/Programming/kapsch/Kapshimage/src/main/resources/static/images";
@@ -33,21 +30,17 @@ public class EndPoint {
         this.imageRepository = imageRepository;
     }
 
-    @GetMapping("/")
+    @GetMapping
     String mainPage() {
         return "home";
     }
 
-    @GetMapping("/bro")
+    @GetMapping("/delete")
     String mainRPs() {
         imageRepository.deleteAll();
-        return "bro";
+        return "redirect:/";
     }
 
-    @ModelAttribute("image")
-    Photo addImage() {
-        return new Photo();
-    }
 
     @PostMapping("/addImage")
     String addImage(Photo image, @RequestParam("file") MultipartFile imageFile, RedirectAttributes redirectAttributes) {
@@ -58,6 +51,7 @@ public class EndPoint {
                 BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
                 stream.write(bytes);
                 stream.close();
+                stream.
                 image.setImage(bytes);
                 image.setName(imageFile.getOriginalFilename());
                 this.image = image;
@@ -73,12 +67,6 @@ public class EndPoint {
         }
         return "redirect:/";
     }
-
-    @ModelAttribute("images")
-    List<Photo> getParticipants() {
-        return imageRepository.findAll();
-    }
-
     @PostMapping("/choose")
     String choose(@RequestParam("id") String id, @RequestParam("c") Category c) {
 
@@ -89,5 +77,17 @@ public class EndPoint {
 
         return "redirect:/";
     }
+
+    @ModelAttribute("image")
+    Photo addImage() {
+        return new Photo();
+    }
+
+    @ModelAttribute("images")
+    List<Photo> getParticipants() {
+        return imageRepository.findAll();
+    }
+
+
 
 }
