@@ -1,5 +1,6 @@
-package at.refugeescode.Kapshimage;
+package at.refugeescode.Kapshimage.repository;
 
+import at.refugeescode.Kapshimage.model.Photo;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;

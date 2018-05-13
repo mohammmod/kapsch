@@ -1,5 +1,6 @@
-package at.refugeescode.Kapshimage;
+package at.refugeescode.Kapshimage.model;
 
+import at.refugeescode.Kapshimage.model.Category;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 

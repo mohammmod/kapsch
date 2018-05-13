@@ -1,20 +1,18 @@
-package at.refugeescode.Kapshimage;
+package at.refugeescode.Kapshimage.view;
 
 
+import at.refugeescode.Kapshimage.model.Category;
+import at.refugeescode.Kapshimage.model.Photo;
+import at.refugeescode.Kapshimage.repository.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.List;
-
-import javax.imageio.ImageIO;
 import java.util.Optional;
 
 
@@ -45,9 +43,15 @@ public class EndPoint {
 
     @PostMapping("/addImage")
     String addPhoto(Photo image, @RequestParam("file") MultipartFile imageFile, RedirectAttributes redirectAttributes) {
+        storeImageInImages(imageFile,redirectAttributes,photoPath);
+        return "redirect:/";
+    }
+
+    private void storeImageInImages(MultipartFile imageFile, RedirectAttributes redirectAttributes, String folderPath) {
         try {
+
             byte[] bytes = imageFile.getBytes();
-            File serverFile = new File(photoPath + File.separator + imageFile.getOriginalFilename());
+            File serverFile = new File(folderPath + File.separator + imageFile.getOriginalFilename());
             BufferedOutputStream bufferStream = new BufferedOutputStream(new FileOutputStream(serverFile));
             bufferStream.write(bytes);
             bufferStream.close();
@@ -58,9 +62,8 @@ public class EndPoint {
             redirectAttributes.addFlashAttribute("flash.message", "Successfully Image uploaded");
 
         } catch (Exception e) {
-            return "you fild to upload photo" + " => " + e.getMessage();
+             e.getMessage();
         }
-        return "redirect:/";
     }
 
     @PostMapping("/choosePhoto")

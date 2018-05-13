@@ -45,12 +45,12 @@
                         <h5>Edit image category: </h5>
 
                         <select name="c">
-                            <option th:each="category : ${T(at.refugeescode.Kapshimage.Category).values()}"
+                            <option th:each="category : ${T(at.refugeescode.Kapshimage.model.Category).values()}"
                                     th:text="${category}">
                             </option>
                         </select>
 
-                        <button type="submit">submit</button>
+                        <button type="submit">chagne</button>
                     </form>
                 </td>
 
@@ -64,7 +64,7 @@
         <p><input type="file" name="file"></p>
         <h4>Select image category: </h4><!--/at/refugeescode/Kapshimage/Category.java-->
         <select th:field="*{category}">
-            <option th:each="category : ${T(at.refugeescode.Kapshimage.Category).values()}"
+            <option th:each="category : ${T(at.refugeescode.Kapshimage.model.Category).values()}"
                     th:value="${category}"
                     th:text="${category}">
             </option>
