@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,12 +22,10 @@ import java.util.Optional;
 public class EndPoint {
 
     private static String photoPath = "/home/mohammad/Programming/kapsch/Kapshimage/src/main/resources/static/images";
-    //   private static String photoPathFromDataBase = "/home/mohammad/Programming/kapsch/Kapshimage/src/main/resources/imagesfromHtml";
 
 
     @Autowired
     private Repository imageRepository;
-    @Autowired
     private Photo image;
 
     @GetMapping
@@ -44,27 +43,27 @@ public class EndPoint {
 
     @PostMapping("/addImage")
     String addPhoto(Photo image, @RequestParam("file") MultipartFile imageFile, RedirectAttributes redirectAttributes) {
-        storeImageInImages(imageFile,redirectAttributes,photoPath);
-        return "redirect:/";
-    }
+        if (imageFile.isEmpty()) {
+            redirectAttributes.addFlashAttribute("flash.message", "file was empty");
+            return "redirect:/";
+        }else {
+            try {
 
-    private void storeImageInImages(MultipartFile imageFile, RedirectAttributes redirectAttributes, String folderPath) {
-        try {
-
-            byte[] bytes = imageFile.getBytes();
-            File serverFile = new File(folderPath + File.separator + imageFile.getOriginalFilename());
-            BufferedOutputStream bufferStream = new BufferedOutputStream(new FileOutputStream(serverFile));
-            bufferStream.write(bytes);
-            bufferStream.close();
-            image.setImage(bytes);
-            image.setName(imageFile.getOriginalFilename());
-            this.image = image;
-            imageRepository.save(this.image);
-            redirectAttributes.addFlashAttribute("flash.message", "Successfully Image uploaded");
-
-        } catch (Exception e) {
-             e.getMessage();
+                byte[] bytes = imageFile.getBytes();
+                File serverFile = new File(photoPath + File.separator + imageFile.getOriginalFilename());
+                BufferedOutputStream bufferStream = new BufferedOutputStream(new FileOutputStream(serverFile));
+                bufferStream.write(bytes);
+                bufferStream.close();
+                image.setImage(bytes);
+                image.setName(imageFile.getOriginalFilename());
+                imageRepository.save(image);
+                redirectAttributes.addFlashAttribute("flash.message", "Successfully Image uploaded");
+            } catch (Exception e) {
+                e.getMessage();
+            }
+            return "redirect:/";
         }
+
     }
 
     @PostMapping("/choosePhoto")
@@ -75,8 +74,6 @@ public class EndPoint {
         imageRepository.deleteById(id);
         imageRepository.save(photo.get());
         redirectAttributes.addFlashAttribute("flash.message", "change Category");
-
-
         return "redirect:/";
     }
 
@@ -89,6 +86,4 @@ public class EndPoint {
     List<Photo> getParticipants() {
         return imageRepository.findAll();
     }
-
-
 }

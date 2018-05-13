@@ -6,7 +6,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.stereotype.Service;
 
 @Document
-@Service
 public class Photo {
     @Id
     private String id;

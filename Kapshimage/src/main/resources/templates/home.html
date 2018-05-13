@@ -40,7 +40,7 @@
                 <td>  </td>
                 <td>
                     <form th:action="@{/choosePhoto}" method="post">
-                        <input style="display:none;" name="id" th:value="${image.id}" />
+                        <input name="id" type="hidden" th:value="${image.id}" />
                         <h5>Edit image category: </h5>
 
                         <select name="c">
