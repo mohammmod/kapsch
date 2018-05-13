@@ -1,6 +1,7 @@
 package at.refugeescode.Kapshimage;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,13 +23,12 @@ import java.util.Optional;
 public class EndPoint {
 
     private static String photoPath = "/home/mohammad/Programming/kapsch/Kapshimage/src/main/resources/static/images";
-    private static String photoPathFromDataBase = "/home/mohammad/Programming/kapsch/Kapshimage/src/main/resources/imagesFromMongo";
-    private Photo image;
-    private Repository imageRepository;
+    //   private static String photoPathFromDataBase = "/home/mohammad/Programming/kapsch/Kapshimage/src/main/resources/imagesfromHtml";
 
-    public EndPoint(Repository imageRepository) {
-        this.imageRepository = imageRepository;
-    }
+
+    @Autowired
+    private Repository imageRepository;
+    private Photo image;
 
     @GetMapping
     String mainPage() {
@@ -36,44 +36,42 @@ public class EndPoint {
     }
 
     @GetMapping("/delete")
-    String mainRPs() {
+    String deleting(RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("flash.message", "delete Successfully");
         imageRepository.deleteAll();
         return "redirect:/";
     }
 
 
     @PostMapping("/addImage")
-    String addImage(Photo image, @RequestParam("file") MultipartFile imageFile, RedirectAttributes redirectAttributes) {
-        if (!imageFile.isEmpty()) {
-            try {
-                byte[] bytes = imageFile.getBytes();
-                File serverFile = new File(photoPath + File.separator + imageFile.getOriginalFilename());
-                BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
-                stream.write(bytes);
-                stream.close();
-                stream.
-                image.setImage(bytes);
-                image.setName(imageFile.getOriginalFilename());
-                this.image = image;
-                imageRepository.save(this.image);
-                redirectAttributes.addFlashAttribute("flash.message", "Successfully Image uploaded");
+    String addPhoto(Photo image, @RequestParam("file") MultipartFile imageFile, RedirectAttributes redirectAttributes) {
+        try {
+            byte[] bytes = imageFile.getBytes();
+            File serverFile = new File(photoPath + File.separator + imageFile.getOriginalFilename());
+            BufferedOutputStream bufferStream = new BufferedOutputStream(new FileOutputStream(serverFile));
+            bufferStream.write(bytes);
+            bufferStream.close();
+            image.setImage(bytes);
+            image.setName(imageFile.getOriginalFilename());
+            this.image = image;
+            imageRepository.save(this.image);
+            redirectAttributes.addFlashAttribute("flash.message", "Successfully Image uploaded");
 
-            } catch (Exception e) {
-                redirectAttributes.addFlashAttribute("flash.message", "Failed Image to upload");
-                return "@@@@You failed to upload " + " => " + e.getMessage();
-            }
-        } else {
-            return "You failed to upload " + " because the file was empty.";
+        } catch (Exception e) {
+            return "you fild to upload photo" + " => " + e.getMessage();
         }
         return "redirect:/";
     }
-    @PostMapping("/choose")
-    String choose(@RequestParam("id") String id, @RequestParam("c") Category c) {
 
-        Optional<Photo> byId = imageRepository.findById(id);
-        byId.get().setCategory(c);
+    @PostMapping("/choosePhoto")
+    String choosePhoto(@RequestParam("id") String id, @RequestParam("c") Category c, RedirectAttributes redirectAttributes) {
+
+        Optional<Photo> photo = imageRepository.findById(id);
+        photo.get().setCategory(c);
         imageRepository.deleteById(id);
-        imageRepository.save(byId.get());
+        imageRepository.save(photo.get());
+        redirectAttributes.addFlashAttribute("flash.message", "change Category");
+
 
         return "redirect:/";
     }
@@ -87,7 +85,6 @@ public class EndPoint {
     List<Photo> getParticipants() {
         return imageRepository.findAll();
     }
-
 
 
 }
